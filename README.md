@@ -380,6 +380,9 @@ while True:
 conn = setupConnection()
 while(True):
 dataTransfer(conn)
+
+
+
 Client code:-
 #!/usr/bin/env python
 import time
@@ -440,3 +443,100 @@ print("Gyroscope:", gyro_data)
 print("Magnetometer:", mag_data)
 # Wait for 1 second before the next reading
 time.sleep(1)
+
+
+DHT COMMUNICATION-----------------------------------------------------------------------
+pip install Adafruit_DHT.
+GPIO 4 FOR DHT
+
+Server code:
+import socket
+import json
+import csv
+host = '10.205.2.245'
+port = 8000
+def setupServer():
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print("Socket created.")
+try:
+s.bind((host, port))
+except socket.error as msg:
+print(msg)
+print("Socket bind comlete.")
+return s
+def setupConnection():
+s.listen(1) # Allows one connection at a time.
+conn, address = s.accept()
+print("Connected to: " + address[0] + ":" + str(address[1]))
+return conn
+def dataTransfer(conn):
+# A big loop that sends/receives data until told not to.
+while True:
+# Receive the data
+data = conn.recv(1024) # receive the data
+data = data.decode('utf-8')
+print(data)
+# Split the data such that you separate the command
+# from the rest of the data.
+dataMessage = data.split(' ', 1)
+command = dataMessage[0]
+dataext = json.loads(data)
+fi eldname = dataext.keys()
+with open('/home/redpitaya/Documents/meow.csv', mode = 'a', newline='') as fi le:
+writer = csv.DictWriter(fi le, fi eldnames = fi eldname)
+fi le.seek(0,2)
+if fi le.tell()==0:
+writer.writeheader()
+writer.writerow(dataext)
+print()
+# conn.close()
+s = setupServer()
+while True:
+conn = setupConnection()
+while(True):
+dataTransfer(conn)
+
+Client code-
+
+#!/usr/bin/env python
+import time
+import Adafruit_DHT  # Library for DHT11
+import socket
+
+# Sensor setup
+DHT_SENSOR = Adafruit_DHT.DHT11
+DHT_PIN = 4  # Replace with the GPIO pin connected to the DHT11 data pin
+
+# Server connection setup
+host = '10.205.2.245'  # Replace with your server's IP
+port = 8000
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((host, port))
+
+print("""temperature-and-humidity.py - Displays the temperature and humidity.
+Press Ctrl+C to exit!
+""")
+
+while True:
+    # Read temperature and humidity from the DHT11 sensor
+    humidity, temperature = Adafruit_DHT.read(DHT_SENSOR, DHT_PIN)
+
+    if humidity is not None and temperature is not None:
+        # Format the data
+        degree_sign = u"\N{DEGREE SIGN}"
+        format_temp = "{:.2f}".format(temperature)
+        format_hum = "{:.2f}".format(humidity)
+
+        print(f'Temperature = {format_temp}{degree_sign}C')
+        print(f'Humidity = {format_hum}%\n')
+
+        # Prepare JSON data
+        jsonData = f'{{ "temperature": {format_temp}, "humidity": {format_hum} }}'
+
+        # Send data to the server
+        s.send(str.encode(jsonData))
+    else:
+        print("Failed to retrieve data from DHT11 sensor")
+
+    # Delay for a few seconds before the next read
+    time.sleep(4)
