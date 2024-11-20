@@ -85,6 +85,116 @@ GPIO.output(L3, GPIO.HIGH)
 time.sleep(0.25)
 GPIO.cleanup()
 
+# Import necessary libraries
+import RPi.GPIO as GPIO  # Library to control GPIO pins on Raspberry Pi
+import time  # Library to handle delays
+
+# Define GPIO pins for LEDs
+L1 = 2
+L2 = 3
+L3 = 4
+L4 = 17
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)  # Use Broadcom pin numbering
+GPIO.setup(L1, GPIO.OUT)
+GPIO.setup(L2, GPIO.OUT)
+GPIO.setup(L3, GPIO.OUT)
+GPIO.setup(L4, GPIO.OUT)
+
+# Turn off all LEDs initially
+GPIO.output(L1, GPIO.HIGH)
+GPIO.output(L2, GPIO.HIGH)
+GPIO.output(L3, GPIO.HIGH)
+GPIO.output(L4, GPIO.HIGH)
+
+try:
+    while True:
+        # Sequence 1: Light up one LED at a time in a loop
+        GPIO.output(L1, GPIO.LOW)
+        time.sleep(1)
+        GPIO.output(L1, GPIO.HIGH)
+
+        GPIO.output(L2, GPIO.LOW)
+        time.sleep(1)
+        GPIO.output(L2, GPIO.HIGH)
+
+        GPIO.output(L3, GPIO.LOW)
+        time.sleep(1)
+        GPIO.output(L3, GPIO.HIGH)
+
+        GPIO.output(L4, GPIO.LOW)
+        time.sleep(1)
+        GPIO.output(L4, GPIO.HIGH)
+
+        # Sequence 2: Rapid blinking of LEDs one by one
+        for i in range(4):
+            GPIO.output(L1, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L1, GPIO.HIGH)
+
+            GPIO.output(L2, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L2, GPIO.HIGH)
+
+            GPIO.output(L3, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L3, GPIO.HIGH)
+
+            GPIO.output(L4, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L4, GPIO.HIGH)
+
+        # Sequence 3: Reverse rapid blinking
+        for i in range(4):
+            GPIO.output(L4, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L4, GPIO.HIGH)
+
+            GPIO.output(L3, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L3, GPIO.HIGH)
+
+            GPIO.output(L2, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L2, GPIO.HIGH)
+
+            GPIO.output(L1, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(L1, GPIO.HIGH)
+
+        # Sequence 4: Alternating LEDs
+        for i in range(4):
+            GPIO.output(L4, GPIO.LOW)
+            GPIO.output(L2, GPIO.LOW)
+            time.sleep(0.25)
+            GPIO.output(L4, GPIO.HIGH)
+            GPIO.output(L2, GPIO.HIGH)
+
+            GPIO.output(L1, GPIO.LOW)
+            GPIO.output(L3, GPIO.LOW)
+            time.sleep(0.25)
+            GPIO.output(L1, GPIO.HIGH)
+            GPIO.output(L3, GPIO.HIGH)
+
+        # Sequence 5: All LEDs blinking together
+        for i in range(4):
+            GPIO.output(L4, GPIO.LOW)
+            GPIO.output(L2, GPIO.LOW)
+            GPIO.output(L1, GPIO.LOW)
+            GPIO.output(L3, GPIO.LOW)
+            time.sleep(0.25)
+            GPIO.output(L4, GPIO.HIGH)
+            GPIO.output(L2, GPIO.HIGH)
+            GPIO.output(L1, GPIO.HIGH)
+            GPIO.output(L3, GPIO.HIGH)
+            time.sleep(0.25)
+
+except KeyboardInterrupt:
+    # Cleanup GPIO on exit
+    print("\nExiting and cleaning up GPIO...")
+    GPIO.cleanup()
+
 Decimal Binary---------------------------------------------------------------------
 import RPi.GPIO as GPIO
 import time
@@ -245,6 +355,8 @@ delay(2000);
 
 Communication code----------------------------------------------------------------
   Used UDP(USER DATAGRAM PROTOCOL)
+
+  
 Server code:-
 import socket
 host = '10.205.2.238'
